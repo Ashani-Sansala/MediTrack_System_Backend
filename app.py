@@ -11,7 +11,7 @@ CORS(app)
 
 # Register Blueprints with the application
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
-app.register_blueprint(login_bp, url_prefix='/login')
+app.register_blueprint(login_bp, url_prefix='/')
 app.register_blueprint(manageCamera_bp, url_prefix='/manageCamera')
 app.register_blueprint(manageUsers_bp, url_prefix='/manageUsers')
 
