@@ -1,5 +1,5 @@
 # Database configuration
-HOST = 'localhost'
-USER = 'root'
-PASSWORD = 'Tutu0727?'
-DATABASE = 'MeditrackUsers'
+HOST='localhost'
+USER='root'
+PASSWORD='ashani16'
+DATABASE='meditrack'
