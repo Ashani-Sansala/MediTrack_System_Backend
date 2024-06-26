@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="348db8f4-28cb-4c45-a434-5db89d6ad312" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blueprints/manageCamera.py" beforeDir="false" afterPath="$PROJECT_DIR$/blueprints/manageCamera.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/dbConn.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/dbConn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/dbUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/dbUtils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +32,7 @@
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
+    &quot;Flask server.MediTrack_System_Backend.executor&quot;: &quot;Run&quot;,
     &quot;Python.MediTrack_System_Backend.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dil__dev&quot;,
@@ -46,7 +46,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Flask server.MediTrack_System_Backend">
     <configuration name="MediTrack_System_Backend" type="PythonConfigurationType" factoryName="Python">
       <module name="MediTrack_System_Backend" />
       <option name="ENV_FILES" value="" />
@@ -68,6 +68,22 @@
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MediTrack_System_Backend" type="Python.FlaskServer">
+      <module name="MediTrack_System_Backend" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
       <method v="2" />
     </configuration>
   </component>
@@ -95,6 +111,23 @@
       <workItem from="1715773564110" duration="53000" />
       <workItem from="1715911933866" duration="179000" />
       <workItem from="1715912136825" duration="4187000" />
+      <workItem from="1716005619117" duration="330000" />
+      <workItem from="1716009813806" duration="143000" />
+      <workItem from="1717221791870" duration="1761000" />
+      <workItem from="1717227174924" duration="981000" />
+      <workItem from="1717382366650" duration="59000" />
+      <workItem from="1717929707651" duration="1220000" />
+      <workItem from="1717934132810" duration="334000" />
+      <workItem from="1717936239593" duration="592000" />
+      <workItem from="1718369857651" duration="2461000" />
+      <workItem from="1718431084804" duration="4451000" />
+      <workItem from="1718541170539" duration="611000" />
+      <workItem from="1718543298099" duration="78000" />
+      <workItem from="1719316721261" duration="6338000" />
+      <workItem from="1719324104091" duration="1141000" />
+      <workItem from="1719325331225" duration="289000" />
+      <workItem from="1719325758813" duration="308000" />
+      <workItem from="1719340910302" duration="2033000" />
     </task>
     <servers />
   </component>
@@ -106,6 +139,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MediTrack_System_Backend$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1715608654604" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/MediTrack_System_Backend$MediTrack_System_Backend.coverage" NAME="MediTrack_System_Backend Coverage Results" MODIFIED="1715919510696" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/MediTrack_System_Backend$MediTrack_System_Backend.coverage" NAME="MediTrack_System_Backend Coverage Results" MODIFIED="1719378134377" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
