@@ -1,5 +1,5 @@
 # Database configuration
-HOST = 'localhost'
+HOST = '127.0.0.1'
 USER = 'root'
-PASSWORD = 'Tutu0727?'
-DATABASE = 'MeditrackUsers'
+PASSWORD = 'psda'
+DATABASE = 'MediTracker'
