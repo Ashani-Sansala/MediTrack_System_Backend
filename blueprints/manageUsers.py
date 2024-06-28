@@ -103,3 +103,4 @@ def check_username():
     conn.close()
     available = result[0] == 0
     return jsonify({'available': available}), 200
+
