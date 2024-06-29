@@ -1,64 +1,63 @@
 from flask import Blueprint, jsonify, request
-from config.dbUtils import get_database_connection
+from utils.dbConn import get_database_connection
+from utils.encryption import decrypt, verify_password
 
 # Blueprint for the login component
 login_bp = Blueprint('login', __name__)
 
-@login_bp.route('/test', methods=['GET'])
-def test_connection():
-    try:
-        # Establish a connection to the database
-        connection = get_database_connection()
-        cursor = connection.cursor()
-
-        # Query the database to select all records from the User table
-        query = "SELECT * FROM User"
-        cursor.execute(query)
-        users = cursor.fetchall()
-
-        # Close the cursor and database connection
-        cursor.close()
-        connection.close()
-
-        # Prepare the output in JSON format
-        output = [{"user_id": user[0], "username": user[1]} for user in users]
-
-        return jsonify({"success": True, "message": "Database connectivity test successful", "users": output})
-    
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)})
-
 @login_bp.route('/authenticate', methods=['POST'])
 def authenticate_user():
-    print("Request received at /login/authenticate")  # Print message when request is received
-    
     data = request.json
-    username = data.get('username')
-    password = data.get('password')
+    print(data)
+    if not data:
+        return jsonify({"success": False, "message": "Invalid request"}), 400
+
+    encrypted_username = data.get('username')
+    encrypted_password = data.get('password')
+    uname_iv = data.get('unameIv')
+    pass_iv = data.get('passIv')
+
+    if not (encrypted_username and encrypted_password and uname_iv and pass_iv):
+        return jsonify({"success": False, "message": "Missing required fields"}), 400
     
-    print("Received username:", username)  # Print received username
-    print("Received password:", password)  # Print received password
+    print(encrypted_username)
+    print(encrypted_password)
+    print(uname_iv)
+    print(pass_iv)
+
+    try:
+        # Decrypt the received username and password
+        username = decrypt(encrypted_username, uname_iv)
+        password = decrypt(encrypted_password, pass_iv)
+    except Exception as e:
+        return jsonify({"success": False, "message": "Decryption failed"}), 400
 
     # Query the database to check if the user exists and the password is correct
     connection = get_database_connection()
     cursor = connection.cursor()
 
-    query = "SELECT username, password FROM User WHERE username = %s"
+    query = "SELECT username, password, fullName, pId FROM User WHERE username = %s"
     cursor.execute(query, (username,))
     user = cursor.fetchone()
 
-    if user:
-        # If user exists, check if the password matches
-        if password == user[1]:
-            print("Login successful")  # Print message for successful login
-            return jsonify({"success": True, "message": "Login successful"})
-        else:
-            print("Invalid password")  # Print message for invalid password
-            return jsonify({"success": False, "message": "Invalid password"})
-    else:
-        print("User not found")  # Print message for user not found
-        return jsonify({"success": False, "message": "User not found"})
-
-    # Close the cursor and database connection
     cursor.close()
     connection.close()
+
+    if user:
+        if verify_password(user[1], password):
+            # Return the user's name in the response
+            return jsonify({"success": True, "message": "Login successful", "username": user[0], "fullName": user[2], "pID": user[3]})
+        else:
+            return jsonify({"success": False, "message": "Invalid password"}), 401
+    else:
+        return jsonify({"success": False, "message": "User not found"}), 404
+
+# Additional security headers
+@login_bp.after_request
+def add_security_headers(response):
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
