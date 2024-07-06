@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from utils.dbConn import get_database_connection
-from datetime import datetime
 
 
 # Blueprint for the historical records component
@@ -88,7 +87,7 @@ def get_table():
 
     # Build the query based on the search terms
     query = ('SELECT dl.logId, e.eqpName, l.buildingName, l.floorNo, l.areaName, '
-        'dl.detectionTime, dl.videoPath '
+        'dl.detectionDate, dl.detectionTime, dl.videoPath '
         'FROM detectionLogs dl '
         'JOIN equipment e ON dl.eqpId = e.eqpId '
         'JOIN location l ON dl.locId = l.locId ')
@@ -101,12 +100,10 @@ def get_table():
             start_time = search_terms.get('startTime')
             end_time = search_terms.get('endTime')
             filters.append(f"detectionTime BETWEEN '{start_time}' AND '{end_time}'")
-        elif key == 'startDate' and value:
-            start_date = datetime.fromtimestamp(int(value) / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
-            filters.append(f"detectionTime >= '{start_date}'")
-        elif key == 'endDate' and value:
-            end_date = datetime.fromtimestamp(int(value) / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
-            filters.append(f"detectionTime <= '{end_date}'")
+        elif 'startDate' in search_terms and 'endDate' in search_terms:
+            start_date = search_terms.get('startDate')
+            end_date = search_terms.get('endDate')
+            filters.append(f"detectionTime BETWEEN '{start_date}' AND '{end_date}'")
         elif key == 'floorNo' and value:
             filters.append(f"{key} IN ({value})")
         elif key == 'eqpName' and value:
@@ -129,7 +126,7 @@ def get_table():
     for row in results:
         serializable_row = list(row)
         # Convert timedelta to seconds (integer)
-        serializable_row[5] = int(serializable_row[5].total_seconds())
+        serializable_row[6] = int(serializable_row[6].total_seconds())
         serializable_results.append(serializable_row)
 
     cursor.close()
