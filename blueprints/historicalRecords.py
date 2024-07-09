@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 from utils.dbConn import get_database_connection
 
-
-# Blueprint for the historical records component
-historical_records_bp = Blueprint('historical_records', __name__)
+# Blueprint for the dashboard component
+historical_records_bp = Blueprint('historicalRecords', __name__)
 
 # Route to get Equipment options for the search functionality
 @historical_records_bp.route('/equipment-options', methods=['GET'])
@@ -86,6 +85,10 @@ def get_table():
     cursor = connection.cursor()
 
     # Build the query based on the search terms
+    #query = 'SELECT dl.logId, e.eqpName, l.buildingName, l.floorNo, l.areaName, dl.detectionTime, dl.videoPath FROM detectionLogs dl JOIN equipment e ON dl.eqpId = e.eqpId JOIN location l ON dl.locId = l.locId'
+
+    #query = 'CALL GetDetectionLogs()'
+
     query = ('SELECT dl.logId, e.eqpName, l.buildingName, l.floorNo, l.areaName, '
         'dl.detectionDate, dl.detectionTime, dl.videoPath '
         'FROM detectionLogs dl '
@@ -95,15 +98,18 @@ def get_table():
     search_terms = request.args
     filters = []
 
+    # For debugging purposes
+    print(search_terms)
+
     for key, value in search_terms.items():
+        start_date = search_terms.get('startDate')
+        end_date = search_terms.get('endDate')
+        if start_date and end_date:
+            filters.append(f"detectionDate BETWEEN '{start_date}' AND '{end_date}'")
         if key == 'startTime' and 'endTime' in search_terms:
             start_time = search_terms.get('startTime')
             end_time = search_terms.get('endTime')
             filters.append(f"detectionTime BETWEEN '{start_time}' AND '{end_time}'")
-        elif 'startDate' in search_terms and 'endDate' in search_terms:
-            start_date = search_terms.get('startDate')
-            end_date = search_terms.get('endDate')
-            filters.append(f"detectionTime BETWEEN '{start_date}' AND '{end_date}'")
         elif key == 'floorNo' and value:
             filters.append(f"{key} IN ({value})")
         elif key == 'eqpName' and value:
@@ -118,6 +124,9 @@ def get_table():
 
     query += ' ORDER BY dl.logId DESC'
 
+    # For debugging purposes
+    print(query)
+
     cursor.execute(query)
     results = cursor.fetchall()
 
@@ -125,10 +134,13 @@ def get_table():
     serializable_results = []
     for row in results:
         serializable_row = list(row)
+        
         # Convert timedelta to seconds (integer)
         serializable_row[6] = int(serializable_row[6].total_seconds())
         serializable_results.append(serializable_row)
+        
 
+    print(serializable_results)
     cursor.close()
     connection.close()
     return jsonify(serializable_results)
