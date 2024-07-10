@@ -90,7 +90,7 @@ def get_table():
     #query = 'CALL GetDetectionLogs()'
 
     query = ('SELECT dl.logId, e.eqpName, l.buildingName, l.floorNo, l.areaName, '
-        'dl.detectionDate, dl.detectionTime, dl.videoPath '
+        'dl.direction, dl.detectionDate, dl.detectionTime, dl.frameurl '
         'FROM detectionLogs dl '
         'JOIN equipment e ON dl.eqpId = e.eqpId '
         'JOIN location l ON dl.locId = l.locId ')
@@ -136,7 +136,7 @@ def get_table():
         serializable_row = list(row)
         
         # Convert timedelta to seconds (integer)
-        serializable_row[6] = int(serializable_row[6].total_seconds())
+        serializable_row[7] = int(serializable_row[7].total_seconds())
         serializable_results.append(serializable_row)
         
 
