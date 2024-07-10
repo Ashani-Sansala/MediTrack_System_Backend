@@ -1,135 +1,151 @@
 from flask import Blueprint, jsonify, request
 from utils.dbConn import get_database_connection
 from utils.encryption import decrypt, verify_password, hash_password
+from utils.firebase_init import get_storage_bucket
+import os
+import uuid
+from mysql.connector import Error
 
-# Blueprint for the user profile component
+# Blueprint for user profile functionality
 userProfile_bp = Blueprint('userProfile', __name__)
 
+# Route to get user profile details
 @userProfile_bp.route('/getUserProfile', methods=['GET', 'POST'])
 def get_user_profile():
     data = request.json
     username = str(data.get('username'))
+    
+    # Check if username is provided
     if not username:
         return jsonify({"success": False, "message": "User not logged in"}), 401
     
     connection = get_database_connection()
-    cursor = connection.cursor()
+    try:
+        with connection.cursor(dictionary=True) as cursor:
+            cursor.callproc('GetUserProfile', (username,))
+            for result in cursor.stored_results():
+                user = result.fetchone()
 
-    query = """
-    SELECT u.username, u.fullName, 
-    DATE_FORMAT(u.birthday, '%Y-%m-%d') AS birthday,
-    u.email, u.phoneNo, p.positionName
-    FROM user u
-    JOIN position p ON u.pId = p.pId
-    WHERE u.username = %s
-    """
-    cursor.execute(query, (username,))
-    user = cursor.fetchone()
+        # Return user details if found
+        if user:
+            return jsonify({"success": True, "userDetails": user})
+        else:
+            return jsonify({"success": False, "message": "User not found"}), 404
+    except Error as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
+        connection.close()
 
-    cursor.close()
-    connection.close()
-
-    if user:
-        user_details = {
-            "username": user[0],
-            "fullName": user[1],
-            "birthday": user[2],
-            "email": user[3],
-            "phone": user[4],
-            "position": user[5]
-        }
-
-        print("get values : ", user_details)
-        return jsonify({"success": True, "userDetails": user_details})
-    else:
-        return jsonify({"success": False, "message": "User not found"}), 404
-
+# Route to update user profile details
 @userProfile_bp.route('/updateUserProfile', methods=['POST'])
 def update_user_profile():
-    data = request.json
-    print("update valuses : ", data)
-    username = str(data.get('username'))
-    if not username:
-        return jsonify({"success": False, "message": "User not logged in"}), 401
+    try:
+        encrypted_username = request.form['username']
 
-    fullName = data.get('fullName')
-    birthday = data.get('birthdate')
-    email = data.get('email')
-    phone = data.get('phone')
-    position = data.get('position')
+        # Check if username is provided
+        if not encrypted_username:
+            return jsonify({"success": False, "message": "User not logged in"}), 401
 
-    print('\n Birthdate: ', birthday)
+        required_fields = ['fullName', 'birthday', 'email', 'phoneNo', 'positionName', 'usernameIv', 'emailIv', 'phoneNoIv']
+        if not all(request.form[field] for field in required_fields):
+            return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-    connection = get_database_connection()
-    cursor = connection.cursor()
+        try:
+            data = request.form
+            # Decrypt sensitive information
+            username = decrypt(encrypted_username, data['usernameIv'])
+            email = decrypt(data['email'], data['emailIv'])
+            phoneNo = decrypt(data['phoneNo'], data['phoneNoIv'])
+        except Exception as e:
+            return jsonify({"success": False, "message": "Try again!"}), 400
 
-    # Get the pId for the given position name
-    cursor.execute("SELECT pId FROM position WHERE positionName = %s", (position,))
-    position_id = cursor.fetchone()
-    if not position_id:
-        cursor.close()
-        connection.close()
-        return jsonify({"success": False, "message": "Invalid position"}), 400
+        # Handle avatar upload if provided
+        avatar_url = None
+        if 'avatar' in request.files:
+            avatar_file = request.files['avatar']
+            if avatar_file.filename != '':
+                file_extension = os.path.splitext(avatar_file.filename)[1]
+                unique_filename = f"{uuid.uuid4()}{file_extension}"
+                bucket = get_storage_bucket()
+                blob = bucket.blob(f"avatars/{unique_filename}")
+                blob.upload_from_string(
+                    avatar_file.read(),
+                    content_type=avatar_file.content_type
+                )
+                blob.make_public()
+                avatar_url = blob.public_url
 
-    position_id = position_id[0]
+        connection = get_database_connection()
+        try:
+            with connection.cursor(dictionary=True) as cursor:
+                cursor.callproc('UpdateUserProfile', (
+                    username,
+                    request.form['fullName'],
+                    request.form['birthday'],
+                    email,
+                    phoneNo,
+                    request.form['positionName'],
+                    avatar_url
+                ))
+                for result in cursor.stored_results():
+                    updated_user = result.fetchone()
 
-    query = """
-    UPDATE user
-    SET fullName = %s, birthday = %s, email = %s, phoneNo = %s, pId = %s
-    WHERE username = %s
-    """
-    print("This is the updated function....")
-    print(fullName, birthday, email, phone, position_id, username)
+            connection.commit()
 
-    cursor.execute(query, (fullName, birthday, email, phone, position_id, username))
-    connection.commit()
+            # Return updated user details if successful
+            if updated_user:
+                return jsonify({
+                    "success": True, 
+                    "message": "User profile updated successfully",
+                    "fullName": updated_user['fullName'],
+                    "avatarUrl": updated_user['avatarUrl']
+                }), 200
+            else:
+                return jsonify({"success": False, "message": "Failed to update user profile"}), 500
+        except Error as e:
+            print(str(e))
+            connection.rollback()
+            return jsonify({"success": False, "message": str(e)}), 500
+        finally:
+            connection.close()
+    except Exception as e:
+        print(str(e))
+        return jsonify({"success": False, "message": str(e)}), 500
 
-    cursor.close()
-    connection.close()
-
-    return jsonify({"success": True, "message": "User profile updated successfully"})
-
-
+# Route to reset user password
 @userProfile_bp.route('/resetPassword', methods=['POST'])
 def reset_password():
     data = request.json
     if not data:
         return jsonify({"success": False, "message": "Invalid request"}), 400
 
-    username = data.get('username')
-    encrypted_current_password = data.get('currentPassword')
-    encrypted_new_password = data.get('newPassword')
-    current_password_iv = data.get('currentPasswordIv')
-    new_password_iv = data.get('newPasswordIv')
-
-    if not (username and encrypted_current_password and encrypted_new_password and current_password_iv and new_password_iv):
+    required_fields = ['username', 'currentPassword', 'newPassword', 'currentPasswordIv', 'newPasswordIv']
+    if not all(field in data for field in required_fields):
         return jsonify({"success": False, "message": "Missing required fields"}), 400
 
     try:
-        current_password = decrypt(encrypted_current_password, current_password_iv)
-        new_password = decrypt(encrypted_new_password, new_password_iv)
-
-        print(current_password)
-        print(new_password)
+        # Decrypt current and new passwords
+        current_password = decrypt(data['currentPassword'], data['currentPasswordIv'])
+        new_password = decrypt(data['newPassword'], data['newPasswordIv'])
     except Exception as e:
         return jsonify({"success": False, "message": "Decryption failed"}), 400
 
     connection = get_database_connection()
-    cursor = connection.cursor()
+    try:
+        with connection.cursor(dictionary=True) as cursor:
+            cursor.execute("SELECT password FROM user WHERE username = %s", (data['username'],))
+            user = cursor.fetchone()
 
-    query = "SELECT password FROM User WHERE username = %s"
-    cursor.execute(query, (username,))
-    user = cursor.fetchone()
-
-    if user and verify_password(user[0], current_password):
-        hashed_new_password = hash_password(new_password)
-        update_query = "UPDATE User SET password = %s WHERE username = %s"
-        cursor.execute(update_query, (hashed_new_password, username))
-        connection.commit()
-        cursor.close()
+            # Verify current password and update with new password if correct
+            if user and verify_password(user['password'], current_password):
+                hashed_new_password = hash_password(new_password)
+                cursor.callproc('ResetPassword', (data['username'], hashed_new_password))
+                connection.commit()
+                return jsonify({"success": True, "message": "Password reset successfully"})
+            else:
+                return jsonify({"success": False, "message": "Current password is incorrect"}), 401
+    except Error as e:
+        connection.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
         connection.close()
-        return jsonify({"success": True, "message": "Password reset successfully"})
-    else:
-        cursor.close()
-        connection.close()
-        return jsonify({"success": False, "message": "Current password is incorrect"}), 401

@@ -1,30 +1,31 @@
 from flask import Blueprint, jsonify
 
+# Blueprint for video feed functionality
 video_feed_bp = Blueprint('video_feed', __name__)
 
+# Route to get video URLs mapped by floor and camera
 @video_feed_bp.route('/videos', methods=['GET'])
 def get_videos():
+    # Dictionary mapping floors to their respective camera video URLs
     video_mapping = {
         'floor1': {
-            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/The%20Witcher%203_%20Wild%20Hunt%20OST%20-%20Sword%20of%20Destiny%20-%20Main%20Theme%20(online-video-cutter.com).mp4?alt=media",
-            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Travis%20Scott%20-%20My%20Eyes%20Cut2.mov?alt=media",
-            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Uyama%20Hiroto%20-%20One%20Day.mp4?alt=media",
-            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Arctic%20Monkeys%20-%20Do%20I%20Wanna%20Know.mp4?alt=media"
+            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/7e61b995-92f1-452f-b897-5324477070a3.mp4?alt=media&token=8f95925c-6f10-4a97-b08b-efdbf0628fbb",
+            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/bb06f041-4bb7-4f6c-bc5f-56a207b508a5.mp4?alt=media&token=eb372aa3-bd82-4636-b60a-961bd517e4dc",
+            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/eed1a9b2-b5f0-4539-bd13-b035f9e26273.mp4?alt=media&token=43f1dcde-95a8-42e2-b25d-c8cb4ca245d1",
+            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/7e61b995-92f1-452f-b897-5324477070a3.mp4?alt=media&token=8f95925c-6f10-4a97-b08b-efdbf0628fbb"
         },
         'floor2': {
-            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Nujabes%20Shiki%20No%20Uta.mp4?alt=media",
-            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Nujabes%20Lady%20Brown.mp4?alt=media",
-            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Sayonara%20Wild%20Hearts%20(Full%20Album%2C%20Continuous%2C%20No%20Fade-out)%20(online-video-cutter.com).mp4?alt=media",
-            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/floor2-camera4.mp4?alt=media"
+            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/111.mp4?alt=media&token=7a48496d-c1de-44c3-96fe-3c2d9847248a",
+            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/112.mp4?alt=media&token=df0f565c-5cdf-4f06-9d9d-e381024e169d",
+            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/113.mp4?alt=media&token=44436d30-db83-43d5-9284-f9e104b7c259",
+            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/113.mp4?alt=media&token=44436d30-db83-43d5-9284-f9e104b7c259"
         },
         'floor3': {
-            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Nujabes%20Feathers.mp4?alt=media",
-            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/Nujabes%20Battlecry.mp4?alt=media",
-            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/city%20girl-%20chroma%20velocity.mp4?alt=media",
-            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/floor3-camera4.mp4?alt=media"
+            'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/111.mp4?alt=media&token=7a48496d-c1de-44c3-96fe-3c2d9847248a",
+            'Camera 02': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/113.mp4?alt=media&token=44436d30-db83-43d5-9284-f9e104b7c259",
+            'Camera 03': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/112.mp4?alt=media&token=df0f565c-5cdf-4f06-9d9d-e381024e169d",
+            'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/113.mp4?alt=media&token=44436d30-db83-43d5-9284-f9e104b7c259"
         }
     }
+    # Return the video mapping as a JSON response
     return jsonify(video_mapping)
-
-
-
