@@ -1,4 +1,3 @@
-# firebase_config.py
 import firebase_admin
 from firebase_admin import credentials, storage
 from dotenv import load_dotenv
