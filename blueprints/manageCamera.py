@@ -1,99 +1,81 @@
 from flask import Blueprint, jsonify, request
 from utils.dbConn import get_database_connection
+from mysql.connector import Error
 
+# Blueprint for the manage camera component
 manageCamera_bp = Blueprint('manageCamera', __name__)
 
+# Route to get camera data based on a search term
 @manageCamera_bp.route('/getData', methods=['GET'])
 def get_camera():
-    search_term = request.args.get('search', '')
-    conn = get_database_connection()
-    cursor = conn.cursor(dictionary=True)
-    query = ("""
-            SELECT 
-                c.cameraId, 
-                c.ipAddress, 
-                c.model, 
-                c.installationDate, 
-                l.buildingName, 
-                l.floorNo, 
-                l.areaName, 
-                c.cameraStatus
-            FROM 
-                camera c
-            JOIN 
-                location l ON c.locId = l.locId
-            WHERE 
-                c.cameraId LIKE %s OR
-                c.ipAddress LIKE %s OR
-                c.model LIKE %s OR
-                c.installationDate LIKE %s OR
-                l.buildingName LIKE %s OR
-                l.floorNo LIKE %s OR
-                l.areaName LIKE %s OR
-                c.cameraStatus LIKE %s;
-            """)
-    search_pattern = f"%{search_term}%"
-    cursor.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern, search_pattern, search_pattern, search_pattern, search_pattern))
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    print(data)
-    return jsonify(data)
+    search_term = request.args.get('search', '')  # Get the search term from query parameters
+    conn = get_database_connection()  # Establish a database connection
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.callproc('GetCameraData', (search_term,))  # Call stored procedure to get camera data
+            for result in cursor.stored_results():
+                data = result.fetchall()  # Fetch the results from the stored procedure
+        return jsonify(data)  # Return the data as a JSON response
+    except Error as e:
+        return jsonify({'error': str(e)}), 500  # Handle database errors
+    finally:
+        conn.close()  # Ensure the database connection is closed
 
+# Route to add a new camera
 @manageCamera_bp.route('/add', methods=['POST'])
 def add_camera():
-    data = request.json
-    loc_id = data.get('locId')
-    ip_address = data.get('ipAddress')
-    model = data.get('model')
-    installation_date = data.get('installationDate')
-    camera_status = data.get('cameraStatus')  
+    data = request.json  # Get the JSON data from the request body
+    conn = get_database_connection()  # Establish a database connection
+    try:
+        with conn.cursor() as cursor:
+            cursor.callproc('AddCamera', (
+                data.get('locId'),
+                data.get('ipAddress'),
+                data.get('model'),
+                data.get('installationDate'),
+                data.get('cameraStatus')
+            ))  # Call stored procedure to add a new camera
+            for result in cursor.stored_results():
+                camera_id = result.fetchone()[0]  # Fetch the newly added camera ID
+        conn.commit()  # Commit the transaction
+        return jsonify({'success': True, 'message': 'Camera added successfully', 'cameraId': camera_id}), 201
+    except Error as e:
+        conn.rollback()  # Rollback the transaction in case of an error
+        return jsonify({'error': str(e)}), 500  # Handle database errors
+    finally:
+        conn.close()  # Ensure the database connection is closed
 
-    print(data)
-    conn = get_database_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO camera (locId, ipAddress, model, installationDate, cameraStatus)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (loc_id, ip_address, model, installation_date, camera_status))
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-    return jsonify({'success': True, 'message': 'Camera added successfully'}), 201
-
-
-@manageCamera_bp.route('/updateCamera/<cameraId>', methods=['PUT'])
+# Route to update an existing camera
+@manageCamera_bp.route('/updateCamera/<int:cameraId>', methods=['PUT'])
 def update_camera(cameraId):
-    data = request.json
-    conn = get_database_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "UPDATE camera SET ipAddress=%s, cameraStatus=%s WHERE cameraId=%s",
-        (data['ipAddress'], data['cameraStatus'], cameraId)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({'success': True, 'message': 'Camera updated successfully'}), 200
+    data = request.json  # Get the JSON data from the request body
+    conn = get_database_connection()  # Establish a database connection
+    try:
+        with conn.cursor() as cursor:
+            cursor.callproc('UpdateCamera', (
+                cameraId,
+                data['ipAddress'],
+                data['cameraStatus']
+            ))  # Call stored procedure to update camera details
+        conn.commit()  # Commit the transaction
+        return jsonify({'success': True, 'message': 'Camera updated successfully'}), 200
+    except Error as e:
+        conn.rollback()  # Rollback the transaction in case of an error
+        return jsonify({'error': str(e)}), 500  # Handle database errors
+    finally:
+        conn.close()  # Ensure the database connection is closed
 
-
+# Route to get location data for cameras
 @manageCamera_bp.route('/locationData', methods=['GET'])
 def get_locations():
-    conn = get_database_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT locId, areaName, floorNo, buildingName FROM location ORDER BY buildingName, floorNo, areaName ASC")
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    locations = []
-    for row in data:
-        locations.append({
-            'locId': row[0],
-            'areaName': row[1],
-            'floorNo': row[2],
-            'buildingName': row[3]
-        })
-    return jsonify(locations)
-
+    conn = get_database_connection()  # Establish a database connection
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.callproc('GetLocationData')  # Call stored procedure to get location data
+            for result in cursor.stored_results():
+                locations = result.fetchall()  # Fetch the results from the stored procedure
+        return jsonify(locations)  # Return the location data as a JSON response
+    except Error as e:
+        return jsonify({'error': str(e)}), 500  # Handle database errors
+    finally:
+        conn.close()  # Ensure the database connection is closed
