@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify
 
+# Blueprint for video feed functionality
 video_feed_bp = Blueprint('video_feed', __name__)
 
+# Route to get video URLs mapped by floor and camera
 @video_feed_bp.route('/videos', methods=['GET'])
 def get_videos():
+    # Dictionary mapping floors to their respective camera video URLs
     video_mapping = {
         'floor1': {
             'Camera 01': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/7e61b995-92f1-452f-b897-5324477070a3.mp4?alt=media&token=8f95925c-6f10-4a97-b08b-efdbf0628fbb",
@@ -24,5 +27,5 @@ def get_videos():
             'Camera 04': "https://firebasestorage.googleapis.com/v0/b/medproject-feab1.appspot.com/o/113.mp4?alt=media&token=44436d30-db83-43d5-9284-f9e104b7c259"
         }
     }
+    # Return the video mapping as a JSON response
     return jsonify(video_mapping)
-
