@@ -121,7 +121,7 @@ def get_area_options():
     # Return area names as a JSON response
     return jsonify(area_names)
 
-# Route to get data for the Location table
+# Route to get data for the detectionLogs table
 @dashboard_bp.route('/table', methods=['GET', 'POST'])
 def get_table():
     # Establish a database connection
