@@ -1,5 +1,5 @@
--- insert data into equipment table
-INSERT INTO equipment (eqpId, eqpName, qty) VALUES
+-- Insert data into equipment table
+INSERT IGNORE INTO equipment (eqpId, eqpName, qty) VALUES
 ('DE01', 'CT Scanner', 3),
 ('DE02', 'C-arm', 4),
 ('DE03', 'ECG Machine', 10),
@@ -18,9 +18,9 @@ INSERT INTO equipment (eqpId, eqpName, qty) VALUES
 ('MT01', 'Hospital Bed', 20),
 ('MT02', 'Wheel Chair', 15),
 ('EI01', 'Crash Cart', 6);
-    
--- insert data into location table    
-INSERT INTO location (areaName, floorNo, buildingName) VALUES 
+
+-- Insert data into location table    
+INSERT IGNORE INTO location (areaName, floorNo, buildingName) VALUES 
 ('Emergency Room', 1, 'Main Building'),
 ('ICU', 2, 'Main Building'),
 ('Operating Theater 1', 1, 'Surgical Wing'),
@@ -47,41 +47,41 @@ INSERT INTO location (areaName, floorNo, buildingName) VALUES
 ('Speech Therapy', 3, 'Annex Building'),
 ('Dental Clinic', 3, 'Annex Building');
 
--- insert data into camera table
-INSERT INTO camera (locId, ipAddress, model, installationDate, cameraStatus) VALUES 
-('1', '192.168.0.1', 'ModelA', '2023-01-15', 'Active'),
-('2', '192.168.0.2', 'ModelB', '2023-02-10', 'Active'),
-('3', '192.168.0.3', 'ModelA', '2023-01-20', 'Under Maintenance'),
-('4', '192.168.0.4', 'ModelC', '2023-03-05', 'Disabled'),
-('5', '192.168.0.5', 'ModelB', '2023-01-25', 'Active'),
-('6', '192.168.0.6', 'ModelA', '2023-04-12', 'Disabled'),
-('7', '192.168.0.7', 'ModelC', '2023-02-15', 'Under Maintenance'),
-('8', '192.168.0.8', 'ModelB', '2023-03-20', 'Active'),
-('9', '192.168.0.9', 'ModelA', '2023-02-28', 'Active'),
-('10', '192.168.0.10', 'ModelC', '2023-01-30', 'Disabled'),
-('11', '192.168.0.11', 'ModelB', '2023-03-12', 'Active'),
-('12', '192.168.0.12', 'ModelA', '2023-04-20', 'Under Maintenance'),
-('13', '192.168.0.13', 'ModelC', '2023-01-17', 'Active'),
-('14', '192.168.0.14', 'ModelB', '2023-02-25', 'Disabled'),
-('15', '192.168.0.15', 'ModelA', '2023-03-18', 'Active'),
-('16', '192.168.0.16', 'ModelC', '2023-04-25', 'Under Maintenance'),
-('17', '192.168.0.17', 'ModelB', '2023-01-22', 'Active'),
-('18', '192.168.0.18', 'ModelA', '2023-02-28', 'Disabled'),
-('19', '192.168.0.19', 'ModelC', '2023-03-22', 'Active'),
-('20', '192.168.0.20', 'ModelB', '2023-01-28', 'Under Maintenance'),
-('1', '192.168.0.21', 'ModelA', '2023-02-15', 'Active'),
-('2', '192.168.0.22', 'ModelC', '2023-04-10', 'Disabled'),
-('3', '192.168.0.23', 'ModelB', '2023-03-01', 'Under Maintenance'),
-('4', '192.168.0.24', 'ModelA', '2023-01-05', 'Active'),
-('5', '192.168.0.25', 'ModelC', '2023-02-18', 'Disabled'),
-('6', '192.168.0.26', 'ModelB', '2023-03-30', 'Active'),
-('7', '192.168.0.27', 'ModelA', '2023-04-18', 'Under Maintenance'),
-('8', '192.168.0.28', 'ModelC', '2023-01-10', 'Disabled'),
-('9', '192.168.0.29', 'ModelB', '2023-02-20', 'Active'),
-('10', '192.168.0.30', 'ModelA', '2023-03-10', 'Under Maintenance');
+-- Insert data into camera table
+INSERT IGNORE INTO camera (locId, ipAddress, model, installationDate, cameraStatus) VALUES 
+(1, '192.168.0.1', 'ModelA', '2023-01-15', 'Active'),
+(2, '192.168.0.2', 'ModelB', '2023-02-10', 'Active'),
+(3, '192.168.0.3', 'ModelA', '2023-01-20', 'Under Maintenance'),
+(4, '192.168.0.4', 'ModelC', '2023-03-05', 'Disabled'),
+(5, '192.168.0.5', 'ModelB', '2023-01-25', 'Active'),
+(6, '192.168.0.6', 'ModelA', '2023-04-12', 'Disabled'),
+(7, '192.168.0.7', 'ModelC', '2023-02-15', 'Under Maintenance'),
+(8, '192.168.0.8', 'ModelB', '2023-03-20', 'Active'),
+(9, '192.168.0.9', 'ModelA', '2023-02-28', 'Active'),
+(10, '192.168.0.10', 'ModelC', '2023-01-30', 'Disabled'),
+(11, '192.168.0.11', 'ModelB', '2023-03-12', 'Active'),
+(12, '192.168.0.12', 'ModelA', '2023-04-20', 'Under Maintenance'),
+(13, '192.168.0.13', 'ModelC', '2023-01-17', 'Active'),
+(14, '192.168.0.14', 'ModelB', '2023-02-25', 'Disabled'),
+(15, '192.168.0.15', 'ModelA', '2023-03-18', 'Active'),
+(16, '192.168.0.16', 'ModelC', '2023-04-25', 'Under Maintenance'),
+(17, '192.168.0.17', 'ModelB', '2023-01-22', 'Active'),
+(18, '192.168.0.18', 'ModelA', '2023-02-28', 'Disabled'),
+(19, '192.168.0.19', 'ModelC', '2023-03-22', 'Active'),
+(20, '192.168.0.20', 'ModelB', '2023-01-28', 'Under Maintenance'),
+(1, '192.168.0.21', 'ModelA', '2023-02-15', 'Active'),
+(2, '192.168.0.22', 'ModelC', '2023-04-10', 'Disabled'),
+(3, '192.168.0.23', 'ModelB', '2023-03-01', 'Under Maintenance'),
+(4, '192.168.0.24', 'ModelA', '2023-01-05', 'Active'),
+(5, '192.168.0.25', 'ModelC', '2023-02-18', 'Disabled'),
+(6, '192.168.0.26', 'ModelB', '2023-03-30', 'Active'),
+(7, '192.168.0.27', 'ModelA', '2023-04-18', 'Under Maintenance'),
+(8, '192.168.0.28', 'ModelC', '2023-01-10', 'Disabled'),
+(9, '192.168.0.29', 'ModelB', '2023-02-20', 'Active'),
+(10, '192.168.0.30', 'ModelA', '2023-03-10', 'Under Maintenance');
 
--- insert data into position table
-INSERT INTO position (pId, positionName, category) VALUES 
+-- Insert data into position table
+INSERT IGNORE INTO position (pId, positionName, category) VALUES 
 ('PN01', 'Nurse Unit Manager', 'HS'),
 ('PN02', 'Associate Nurse Unit Manager', 'HS'),
 ('PN03', 'Nurse Practitioner', 'HS'),

@@ -1,60 +1,60 @@
--- create database MediTracker
+-- Create database MediTracker if it doesn't exist
 CREATE DATABASE IF NOT EXISTS MediTracker;
 
--- select the created database
+-- Select the created database
 USE MediTracker;
 
--- create table equipment for equipment details
-CREATE TABLE equipment(
-	eqpId CHAR(5) PRIMARY KEY,
-	eqpName VARCHAR(40) NOT NULL,
-	qty INT NOT NULL
+-- Create table equipment for equipment details
+CREATE TABLE IF NOT EXISTS equipment (
+    eqpId CHAR(5) PRIMARY KEY,
+    eqpName VARCHAR(40) NOT NULL,
+    qty INT NOT NULL
 );
 
--- location table for location details of the hospital
-CREATE TABLE location(
-	locId INT PRIMARY KEY AUTO_INCREMENT,
-	buildingName VARCHAR(100) NOT NULL,
-	floorNo INT NOT NULL,
-	areaName VARCHAR(100) NOT NULL
+-- Location table for location details of the hospital
+CREATE TABLE IF NOT EXISTS location (
+    locId INT PRIMARY KEY AUTO_INCREMENT,
+    buildingName VARCHAR(100) NOT NULL,
+    floorNo INT NOT NULL,
+    areaName VARCHAR(100) NOT NULL
 );
 
--- camera table for camera details
-CREATE TABLE camera(
-	cameraId INT PRIMARY KEY AUTO_INCREMENT,
-	locId INT NOT NULL,
-	ipAddress CHAR(15) NOT NULL,
-	model VARCHAR(100) NOT NULL,
-	installationDate DATE NOT NULL,
-	cameraStatus ENUM('Disabled', 'Active', 'Under Maintenance') NOT NULL,
-	FOREIGN KEY (locId) REFERENCES location(locId)
+-- Camera table for camera details
+CREATE TABLE IF NOT EXISTS camera (
+    cameraId INT PRIMARY KEY AUTO_INCREMENT,
+    locId INT NOT NULL,
+    ipAddress CHAR(15) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    installationDate DATE NOT NULL,
+    cameraStatus ENUM('Disabled', 'Active', 'Under Maintenance') NOT NULL,
+    FOREIGN KEY (locId) REFERENCES location(locId)
 );
 
--- detectionLogs table for detection details
-CREATE TABLE detectionLogs(
-	logId INT PRIMARY KEY AUTO_INCREMENT,
-	eqpId CHAR(5) NOT NULL,
-	camId INT NOT NULL,
-	locId INT NOT NULL,
+-- DetectionLogs table for detection details
+CREATE TABLE IF NOT EXISTS detectionLogs (
+    logId INT PRIMARY KEY AUTO_INCREMENT,
+    eqpId CHAR(5) NOT NULL,
+    camId INT NOT NULL,
+    locId INT NOT NULL,
     direction ENUM('Right', 'Left', 'In', 'Out', 'Static') NOT NULL,
-	detectionTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	detectionTime TIME AS (TIME(detectionTimestamp)) STORED,
-	detectionDate DATE AS (DATE(detectionTimestamp)) STORED,
-	frameUrl CHAR(255) NOT NULL,
-	FOREIGN KEY (eqpId) REFERENCES equipment(eqpId),
-	FOREIGN KEY (locId) REFERENCES location(locId),
-	FOREIGN KEY (camId) REFERENCES camera(cameraId)
+    detectionTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    detectionTime TIME AS (TIME(detectionTimestamp)) STORED,
+    detectionDate DATE AS (DATE(detectionTimestamp)) STORED,
+    frameUrl CHAR(255) NOT NULL,
+    FOREIGN KEY (eqpId) REFERENCES equipment(eqpId),
+    FOREIGN KEY (locId) REFERENCES location(locId),
+    FOREIGN KEY (camId) REFERENCES camera(cameraId)
 );
 
--- position table for position details of the employees
-CREATE TABLE position (
-	pId CHAR(5) PRIMARY KEY,
-	positionName VARCHAR(100) NOT NULL,
+-- Position table for position details of the employees
+CREATE TABLE IF NOT EXISTS position (
+    pId CHAR(5) PRIMARY KEY,
+    positionName VARCHAR(100) NOT NULL,
     category ENUM('HS', 'AD') NOT NULL 
 );
 
--- user table for user details
-CREATE TABLE user (
+-- User table for user details
+CREATE TABLE IF NOT EXISTS user (
     username CHAR(50) PRIMARY KEY,
     password CHAR(60) NOT NULL,
     fullName VARCHAR(250) NOT NULL,

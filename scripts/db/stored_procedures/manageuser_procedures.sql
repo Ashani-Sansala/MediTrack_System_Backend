@@ -1,5 +1,6 @@
 -- For Manage Users
 -- Procedure to get user data
+DROP PROCEDURE IF EXISTS GetUserData;
 DELIMITER //
 CREATE PROCEDURE GetUserData(
     IN search_term VARCHAR(1000)
@@ -36,6 +37,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to remove user
+DROP PROCEDURE IF EXISTS RemoveUser;
 DELIMITER //
 CREATE PROCEDURE RemoveUser(
     IN p_username CHAR(50)
@@ -47,6 +49,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to add a user
+DROP PROCEDURE IF EXISTS AddUser;
 DELIMITER //
 CREATE PROCEDURE AddUser(
     IN p_username CHAR(50),
@@ -65,6 +68,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to get positions
+DROP PROCEDURE IF EXISTS GetPositions;
 DELIMITER //
 CREATE PROCEDURE GetPositions()
 BEGIN
@@ -74,6 +78,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to check username
+DROP PROCEDURE IF EXISTS CheckUsername;
 DELIMITER //
 CREATE PROCEDURE CheckUsername(
     IN p_username CHAR(50)

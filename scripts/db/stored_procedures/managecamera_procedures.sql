@@ -1,5 +1,6 @@
 -- For Manage Camera
 -- Procedure to get camera data
+DROP PROCEDURE IF EXISTS GetCameraData;
 DELIMITER //
 CREATE PROCEDURE GetCameraData(
     IN search_term VARCHAR(1000)
@@ -39,6 +40,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to add a camera
+DROP PROCEDURE IF EXISTS AddCamera;
 DELIMITER //
 CREATE PROCEDURE AddCamera(
     IN p_locId INT,
@@ -56,6 +58,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to update a camera
+DROP PROCEDURE IF EXISTS UpdateCamera;
 DELIMITER //
 CREATE PROCEDURE UpdateCamera(
     IN p_cameraId INT,
@@ -71,6 +74,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to get location data
+DROP PROCEDURE IF EXISTS GetLocationData;
 DELIMITER //
 CREATE PROCEDURE GetLocationData()
 BEGIN

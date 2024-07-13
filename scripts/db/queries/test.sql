@@ -5,6 +5,8 @@ SELECT * FROM detectionLogs;
 SELECT * FROM position;
 SELECT * FROM user;
 
+SELECT * FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=database();
+
 SELECT username, password FROM User WHERE username = 'amy_scott';
 
 SELECT u.username, u.password, u.fullName, p.category, u.avatarUrl 
@@ -13,7 +15,7 @@ SELECT u.username, u.password, u.fullName, p.category, u.avatarUrl
     WHERE u.username = 'jane_smith';
 
 ALTER TABLE position ADD COLUMN category ENUM('HS', 'AD') NOT NULL;
-UPDATE position SET category='AD' WHERE pId='PA01';
+UPDATE user SET password='$2b$12$gOijNVndylnRwbNzGSCez.1ynm42ccL1kNhGiy/s4YcwLfPHfZUPm' WHERE username='dolores_abernarthy';
 SELECT 
     dl.logId, 
     e.eqpName, 
