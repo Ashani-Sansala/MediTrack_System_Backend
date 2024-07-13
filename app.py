@@ -7,6 +7,7 @@ from blueprints.manageCamera import manageCamera_bp
 from blueprints.manageUsers import manageUsers_bp
 from blueprints.userProfile import userProfile_bp
 from blueprints.videoFeed import video_feed_bp
+from blueprints.historicalRecords import historical_records_bp
 import utils.firebase_init  # Import firebase_config to initialize Firebase
 
 utils.firebase_init.initialize_firebase()
@@ -30,6 +31,7 @@ app.register_blueprint(manageCamera_bp, url_prefix='/manageCamera')
 app.register_blueprint(manageUsers_bp, url_prefix='/manageUsers')
 app.register_blueprint(userProfile_bp, url_prefix='/userProfile')
 app.register_blueprint(video_feed_bp, url_prefix='/videoFeed')
+app.register_blueprint(historical_records_bp, url_prefix='/historicalRecords')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
