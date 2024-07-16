@@ -1,5 +1,6 @@
 -- For Dashboard
 -- Stored procedure for getting equipment options
+DROP PROCEDURE IF EXISTS GetEquipmentOptions;
 DELIMITER //
 CREATE PROCEDURE GetEquipmentOptions()
 BEGIN
@@ -8,9 +9,10 @@ BEGIN
     ORDER BY eqpName ASC;
 END //
 DELIMITER ;
--------------------------
+-- -----------------------
 
 -- Stored procedure for getting building options
+DROP PROCEDURE IF EXISTS GetBuildingOptions;
 DELIMITER //
 CREATE PROCEDURE GetBuildingOptions()
 BEGIN
@@ -22,6 +24,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Stored procedure for getting table data
+DROP PROCEDURE IF EXISTS GetTableData;
 DELIMITER //
 CREATE PROCEDURE GetTableData(
     IN p_startTime TIME,

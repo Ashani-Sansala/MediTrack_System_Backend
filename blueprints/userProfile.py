@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from utils.dbConn import get_database_connection
-from utils.encryption import decrypt, verify_password, hash_password
-from utils.firebase_init import get_storage_bucket
+from utils.dbConn import get_database_connection  
+from utils.encryption import decrypt, verify_password, hash_password 
+from utils.firebase_init import get_storage_bucket  
 import os
 import uuid
 from mysql.connector import Error
@@ -13,18 +13,18 @@ userProfile_bp = Blueprint('userProfile', __name__)
 @userProfile_bp.route('/getUserProfile', methods=['GET', 'POST'])
 def get_user_profile():
     data = request.json
-    username = str(data.get('username'))
-    
+    username = str(data.get('username'))  # Extract username from request data
+
     # Check if username is provided
     if not username:
         return jsonify({"success": False, "message": "User not logged in"}), 401
-    
-    connection = get_database_connection()
+
+    connection = get_database_connection()  # Establish database connection
     try:
         with connection.cursor(dictionary=True) as cursor:
             cursor.callproc('GetUserProfile', (username,))
             for result in cursor.stored_results():
-                user = result.fetchone()
+                user = result.fetchone()  # Fetch user profile details from database
 
         # Return user details if found
         if user:
@@ -34,7 +34,7 @@ def get_user_profile():
     except Error as e:
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
-        connection.close()
+        connection.close()  # Close database connection
 
 # Route to update user profile details
 @userProfile_bp.route('/updateUserProfile', methods=['POST'])
@@ -57,7 +57,7 @@ def update_user_profile():
             email = decrypt(data['email'], data['emailIv'])
             phoneNo = decrypt(data['phoneNo'], data['phoneNoIv'])
         except Exception as e:
-            return jsonify({"success": False, "message": "Try again!"}), 400
+            return jsonify({"success": False, "message": "Failed to decrypt sensitive data"}), 400
 
         # Handle avatar upload if provided
         avatar_url = None
@@ -73,9 +73,9 @@ def update_user_profile():
                     content_type=avatar_file.content_type
                 )
                 blob.make_public()
-                avatar_url = blob.public_url
+                avatar_url = blob.public_url  # Get publicly accessible URL for avatar
 
-        connection = get_database_connection()
+        connection = get_database_connection()  # Establish database connection
         try:
             with connection.cursor(dictionary=True) as cursor:
                 cursor.callproc('UpdateUserProfile', (
@@ -88,9 +88,9 @@ def update_user_profile():
                     avatar_url
                 ))
                 for result in cursor.stored_results():
-                    updated_user = result.fetchone()
+                    updated_user = result.fetchone()  # Fetch updated user details from database
 
-            connection.commit()
+            connection.commit()  # Commit changes to database
 
             # Return updated user details if successful
             if updated_user:
@@ -103,13 +103,11 @@ def update_user_profile():
             else:
                 return jsonify({"success": False, "message": "Failed to update user profile"}), 500
         except Error as e:
-            print(str(e))
-            connection.rollback()
+            connection.rollback()  # Rollback changes on error
             return jsonify({"success": False, "message": str(e)}), 500
         finally:
-            connection.close()
+            connection.close()  # Close database connection
     except Exception as e:
-        print(str(e))
         return jsonify({"success": False, "message": str(e)}), 500
 
 # Route to reset user password
@@ -128,24 +126,24 @@ def reset_password():
         current_password = decrypt(data['currentPassword'], data['currentPasswordIv'])
         new_password = decrypt(data['newPassword'], data['newPasswordIv'])
     except Exception as e:
-        return jsonify({"success": False, "message": "Decryption failed"}), 400
+        return jsonify({"success": False, "message": "Failed to decrypt passwords"}), 400
 
-    connection = get_database_connection()
+    connection = get_database_connection()  # Establish database connection
     try:
         with connection.cursor(dictionary=True) as cursor:
             cursor.execute("SELECT password FROM user WHERE username = %s", (data['username'],))
-            user = cursor.fetchone()
+            user = cursor.fetchone()  # Fetch user's current hashed password from database
 
             # Verify current password and update with new password if correct
             if user and verify_password(user['password'], current_password):
                 hashed_new_password = hash_password(new_password)
-                cursor.callproc('ResetPassword', (data['username'], hashed_new_password))
-                connection.commit()
+                cursor.callproc('ResetPassword', (data['username'], hashed_new_password))  # Call stored procedure to reset password
+                connection.commit()  # Commit password update
                 return jsonify({"success": True, "message": "Password reset successfully"})
             else:
                 return jsonify({"success": False, "message": "Current password is incorrect"}), 401
     except Error as e:
-        connection.rollback()
+        connection.rollback()  # Rollback changes on error
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
-        connection.close()
+        connection.close()  # Close database connection

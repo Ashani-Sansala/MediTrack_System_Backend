@@ -1,5 +1,6 @@
 -- For Profile
 -- Procedure to get user profile
+DROP PROCEDURE IF EXISTS GetUserProfile;
 DELIMITER //
 CREATE PROCEDURE GetUserProfile(
     IN p_username CHAR(50)
@@ -16,6 +17,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to update user profile
+DROP PROCEDURE IF EXISTS UpdateUserProfile;
 DELIMITER //
 CREATE PROCEDURE UpdateUserProfile(
     IN p_username CHAR(50),
@@ -50,6 +52,7 @@ DELIMITER ;
 -- -----------------------
 
 -- Procedure to reset password
+DROP PROCEDURE IF EXISTS ResetPassword;
 DELIMITER //
 CREATE PROCEDURE ResetPassword(
     IN p_username CHAR(50),

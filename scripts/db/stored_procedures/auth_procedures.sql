@@ -1,4 +1,5 @@
 -- For User Login
+DROP PROCEDURE IF EXISTS AuthenticateUser;
 -- Stored procedure for authenticate users
 DELIMITER //
 CREATE PROCEDURE AuthenticateUser(
